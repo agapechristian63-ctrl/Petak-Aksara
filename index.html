@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pawiyatan Jawa - Portal Game Edukasi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        jawa: {
+                            dark: '#2C1B10',     /* Cokelat Gelap Joglo */
+                            primary: '#4A2E1B',  /* Cokelat Hangat */
+                            gold: '#D4AF37',     /* Emas Klasik */
+                            goldLight: '#F3E5AB',/* Kuning Gading */
+                            light: '#FAF6F0',    /* Krem Lembut */
+                            accent: '#8C2D19'    /* Merah Bata / Sogan */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .batik-pattern {
+            background-color: #faf6f0;
+            background-image: radial-gradient(#4a2e1b 0.5px, transparent 0.5px), radial-gradient(#4a2e1b 0.5px, #faf6f0 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.03;
+        }
+        .nav-transition {
+            transition: none;
+        }
+        .rule-card {
+            transition: all 0.3s ease;
+        }
+        .rule-toggle {
+            transition: background-color 0.2s ease;
+        }
+        .rule-toggle:hover {
+            background-color: #faf6f0;
+        }
+        .rule-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.35s ease;
+        }
+        .rule-card.is-open .rule-content {
+            max-height: 420px;
+            opacity: 1;
+        }
+        .rule-icon {
+            transition: transform 0.25s ease;
+        }
+        .rule-card.is-open .rule-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+    
+    <script src="config.js"></script>
+</head>
+<body class="bg-jawa-light text-jawa-dark font-sans overflow-x-hidden">
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-jawa-dark/95 backdrop-blur-md border-b border-jawa-gold/15 shadow-sm nav-transition">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 nav-inner">
+            <div class="flex items-center justify-between h-16 md:h-18">
+                <a href="#home" class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full border border-jawa-gold/70 flex items-center justify-center bg-jawa-primary shadow-sm">
+                        <span id="nav-logo" class="text-jawa-gold font-serif font-bold text-lg">ꦗ</span>
+                    </div>
+                    <div class="leading-tight">
+                        <span id="nav-brand-name" class="font-serif text-base md:text-lg font-semibold text-white tracking-wide block">Pawiyatan Jawa</span>
+                        <span id="nav-tagline" class="hidden sm:block text-[10px] text-jawa-gold/80 tracking-[0.25em] uppercase">Petualangan Budaya</span>
+                    </div>
+                </a>
+
+                <div id="desktop-menu" class="hidden md:flex items-center gap-6"></div>
+
+                <div class="hidden md:flex items-center">
+                    <a id="nav-cta-btn" href="file_game/index.html" class="inline-flex items-center justify-center px-4 py-2 rounded-full border border-jawa-gold/70 text-jawa-gold hover:bg-jawa-gold hover:text-jawa-dark font-semibold text-sm transition duration-300 shadow-sm">
+                        <span id="nav-cta-btn-text">Main Sekarang</span>
+                    </a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-jawa-dark border-t border-jawa-gold/10 px-4 pt-2 pb-4 space-y-2"></div>
+    </nav>
+
+
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-cover bg-center bg-no-repeat">
+        <div class="absolute inset-4 md:inset-8 border border-jawa-gold/20 pointer-events-none rounded-lg z-10"></div>
+        <div class="absolute inset-6 md:inset-10 border border-jawa-gold/10 pointer-events-none rounded-lg z-10"></div>
+        
+        <div class="relative z-20 max-w-5xl mx-auto px-4 text-center text-white py-12">
+            <div class="inline-block mb-4 px-4 py-1.5 border border-jawa-gold/40 rounded-full bg-jawa-gold/10 backdrop-blur-sm">
+                <span id="hero-tag" class="text-xs md:text-sm font-semibold tracking-widest text-jawa-gold uppercase"></span>
+            </div>
+            
+            <h1 id="hero-title" class="font-serif text-4xl md:text-7xl font-bold tracking-tight leading-tight mb-6"></h1>
+            <p id="hero-subtitle" class="text-base md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 font-light"></p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap">
+                <a id="hero-btn-primary" href="" class="w-full sm:w-auto px-8 py-3.5 bg-jawa-gold text-jawa-dark font-bold rounded-full hover:bg-yellow-500 transition duration-300 shadow-lg transform hover:-translate-y-0.5"></a>
+                <a id="hero-btn-secondary" href="" class="w-full sm:w-auto px-8 py-3.5 border border-white/30 text-white hover:bg-white/10 font-semibold rounded-full transition duration-300"></a>
+                <a id="hero-btn-tertiary" href="" class="w-full sm:w-auto px-8 py-3.5 border border-jawa-gold/50 text-jawa-gold hover:bg-jawa-gold/10 font-semibold rounded-full transition duration-300"></a>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-jawa-light to-transparent z-15"></div>
+    </section>
+
+
+    <section id="tentang" class="relative py-24 px-4 sm:px-6 lg:px-8 bg-jawa-light overflow-hidden">
+        <div class="absolute inset-0 batik-pattern pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 id="tentang-title" class="font-serif text-3xl md:text-5xl font-bold text-jawa-primary mb-4"></h2>
+                <div class="w-24 h-1 bg-jawa-gold mx-auto mb-6 rounded-full"></div>
+                <p id="tentang-quote" class="text-gray-600 italic"></p>
+                <p id="tentang-translation" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+
+            <div id="tentang-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
+    </section>
+
+
+    <section id="peraturan" class="relative py-24 px-4 sm:px-6 lg:px-8 bg-[#F4EDE2] overflow-hidden border-t border-b border-jawa-gold/30">
+        <div class="absolute inset-0 batik-pattern pointer-events-none"></div>
+        
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span id="peraturan-tagline" class="text-xs font-semibold tracking-widest text-jawa-accent uppercase block mb-2"></span>
+                <h2 id="peraturan-title" class="font-serif text-3xl md:text-5xl font-bold text-jawa-dark mb-4"></h2>
+                <div class="w-24 h-1 bg-jawa-gold mx-auto mb-6 rounded-full"></div>
+                <p id="peraturan-desc" class="text-gray-700 text-sm md:text-base"></p>
+            </div>
+
+            <div id="peraturan-grid" class="flex flex-col gap-4 max-w-3xl mx-auto"></div>
+
+            <div class="mt-12 text-center bg-jawa-dark text-white py-8 px-6 rounded-2xl border-2 border-jawa-gold/40 shadow-inner max-w-4xl mx-auto">
+                <p id="peraturan-cta-quote" class="font-serif italic text-lg text-jawa-goldLight mb-4"></p>
+                <p id="peraturan-cta-translation" class="text-xs text-gray-300 max-w-xl mx-auto mb-6"></p>
+                <a id="peraturan-cta-btn" href="" class="inline-flex items-center justify-center px-8 py-3 bg-jawa-gold text-jawa-dark font-bold rounded-full hover:bg-yellow-500 transition duration-300"></a>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="bg-jawa-dark text-white border-t border-jawa-gold/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full border border-jawa-gold flex items-center justify-center bg-jawa-primary">
+                            <span class="text-jawa-gold font-serif font-bold text-sm">ꦗ</span>
+                        </div>
+                        <span id="footer-brand-name" class="font-serif text-lg font-bold text-white tracking-wide">Pawiyatan Jawa</span>
+                    </div>
+                    <p id="footer-about" class="text-gray-400 text-sm leading-relaxed"></p>
+                </div>
+
+                <div class="md:justify-self-center">
+                    <h4 class="font-serif font-bold text-jawa-gold mb-4 text-base">Navigasi</h4>
+                    <ul id="footer-menu" class="space-y-2 text-sm text-gray-400"></ul>
+                </div>
+
+                <div>
+                    <h4 class="font-serif font-bold text-jawa-gold mb-4 text-base">Semboyan Hari Ini</h4>
+                    <p id="footer-quote" class="text-gray-400 italic text-sm leading-relaxed mb-2"></p>
+                    <p id="footer-quote-translation" class="text-xs text-gray-500"></p>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p id="copyright-text"></p>
+                <p id="footer-philosophical" class="text-jawa-gold/60 font-serif"></p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const config = window.siteConfig;
+            if (!config) {
+                console.error("Gagal memuat berkas konfigurasi config.js!");
+                return;
+            }
+
+            const heroSection = document.getElementById('home');
+
+            // buat hero background fullscreen pada semua layar
+            heroSection.classList.add('min-h-screen');
+            heroSection.style.minHeight = '100vh';
+            heroSection.style.display = 'flex';
+            heroSection.style.alignItems = 'center';
+            heroSection.style.justifyContent = 'center';
+            heroSection.style.paddingTop = '5rem';
+            heroSection.style.backgroundSize = 'cover';
+            heroSection.style.backgroundPosition = 'center';
+
+
+            // 1. Set Identitas Umum
+            document.title = config.metadata.title;
+            document.getElementById("nav-logo").innerText = config.metadata.logoText;
+            document.getElementById("nav-brand-name").innerText = config.metadata.brandName;
+            document.getElementById("nav-tagline").innerText = config.metadata.tagline;
+
+            // 2. Render Menu Navigasi Dinamis
+            const desktopMenu = document.getElementById("desktop-menu");
+            const mobileMenu = document.getElementById("mobile-menu");
+            const footerMenu = document.getElementById("footer-menu");
+
+            desktopMenu.innerHTML = "";
+            mobileMenu.innerHTML = "";
+            footerMenu.innerHTML = "";
+
+            config.navigation.links.forEach(link => {
+                const dLink = document.createElement("a");
+                dLink.href = link.href;
+                dLink.className = "text-gray-300 hover:text-jawa-gold font-medium font-serif transition duration-200";
+                dLink.innerText = link.label;
+                desktopMenu.appendChild(dLink);
+
+                const mLink = document.createElement("a");
+                mLink.href = link.href;
+                mLink.className = "block px-3 py-2 text-base font-medium font-serif text-gray-300 hover:text-jawa-gold rounded-md";
+                mLink.innerText = link.label;
+                mobileMenu.appendChild(mLink);
+
+                const fLink = document.createElement("li");
+                fLink.innerHTML = `<a href="${link.href}" class="hover:text-jawa-gold transition duration-200">${link.label}</a>`;
+                footerMenu.appendChild(fLink);
+            });
+
+            const fLinkMain = document.createElement("li");
+            fLinkMain.innerHTML = `<a href="${config.navigation.button.href}" class="hover:text-jawa-gold transition duration-200">${config.navigation.button.label}</a>`;
+            footerMenu.appendChild(fLinkMain);
+
+            document.getElementById("nav-cta-btn").href = config.navigation.button.href;
+            document.getElementById("nav-cta-btn-text").innerText = config.navigation.button.label;
+
+            const mobileBtnDiv = document.createElement("div");
+            mobileBtnDiv.className = "pt-4 border-t border-jawa-gold/20";
+            mobileBtnDiv.innerHTML = `
+                <a href="${config.navigation.button.href}" class="block w-full text-center px-4 py-2.5 bg-jawa-gold text-jawa-dark font-bold rounded-full hover:bg-yellow-500 transition duration-200">
+                    ${config.navigation.button.label}
+                </a>
+            `;
+            mobileMenu.appendChild(mobileBtnDiv);
+
+            // 3. Render Hero Beranda
+            document.getElementById("home").style.backgroundImage = `linear-gradient(to bottom, rgba(44, 27, 16, 0.85), rgba(44, 27, 16, 0.95)), url('${config.hero.bgImage}')`;
+            document.getElementById("hero-tag").innerText = config.hero.tag;
+            document.getElementById("hero-title").innerHTML = config.hero.title;
+            document.getElementById("hero-subtitle").innerText = config.hero.subtitle;
+            
+            const btnPrimary = document.getElementById("hero-btn-primary");
+            btnPrimary.innerText = config.hero.ctaPrimary.label;
+            btnPrimary.href = config.hero.ctaPrimary.href;
+
+            const btnSecondary = document.getElementById("hero-btn-secondary");
+            btnSecondary.innerText = config.hero.ctaSecondary.label;
+            btnSecondary.href = config.hero.ctaSecondary.href;
+
+            const btnTertiary = document.getElementById("hero-btn-tertiary");
+            btnTertiary.innerText = config.hero.ctaTertiary.label;
+            btnTertiary.href = config.hero.ctaTertiary.href;
+
+            // 4. Render Bagian Tentang
+            document.getElementById("tentang-title").innerText = config.tentang.title;
+
+            const tentangGrid = document.getElementById("tentang-grid");
+            tentangGrid.innerHTML = "";
+            config.tentang.items.forEach(item => {
+                const card = document.createElement("div");
+                card.className = `bg-white p-8 rounded-2xl shadow-md border-t-4 ${item.borderClass} hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`;
+                card.innerHTML = `
+                    <div class="w-16 h-16 bg-jawa-light rounded-2xl flex items-center justify-center mb-6 text-jawa-accent">
+                        ${item.icon}
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-jawa-primary mb-3">${item.title}</h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">${item.desc}</p>
+                `;
+                tentangGrid.appendChild(card);
+            });
+
+            // 5. Render Peraturan Panduan
+            document.getElementById("peraturan-tagline").innerText = config.peraturan.tagline;
+            document.getElementById("peraturan-title").innerText = config.peraturan.title;
+
+            const peraturanGrid = document.getElementById("peraturan-grid");
+            peraturanGrid.innerHTML = "";
+            config.peraturan.steps.forEach(step => {
+                const stepCard = document.createElement("div");
+                stepCard.className = "rule-card bg-white rounded-2xl shadow-sm border border-jawa-gold/20 overflow-hidden";
+                stepCard.innerHTML = `
+                    <button type="button" class="rule-toggle w-full flex items-start gap-4 md:gap-6 p-6 md:p-8 text-left" aria-expanded="false">
+                        <div class="w-12 h-12 rounded-full bg-jawa-primary text-jawa-gold flex items-center justify-center font-serif font-bold text-xl flex-shrink-0">
+                            ${step.num}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-3">
+                                <h3 class="font-serif text-lg font-bold text-jawa-primary">${step.title}</h3>
+                                <svg class="rule-icon w-5 h-5 text-jawa-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </button>
+                    <div class="rule-content px-6 md:px-8 pb-0">
+                        <p class="text-gray-600 text-sm leading-relaxed pb-6 md:pb-8">${step.desc}</p>
+                    </div>
+                `;
+
+                const toggleButton = stepCard.querySelector('.rule-toggle');
+                toggleButton.addEventListener('click', () => {
+                    const isOpen = stepCard.classList.contains('is-open');
+
+                    document.querySelectorAll('.rule-card.is-open').forEach(card => {
+                        if (card !== stepCard) {
+                            card.classList.remove('is-open');
+                            const otherButton = card.querySelector('.rule-toggle');
+                            otherButton.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    stepCard.classList.toggle('is-open', !isOpen);
+                    toggleButton.setAttribute('aria-expanded', String(!isOpen));
+                });
+
+                peraturanGrid.appendChild(stepCard);
+            });
+
+            // 6. Render Credits Team
+            const creditsSection = document.createElement('section');
+            creditsSection.id = 'credits';
+            creditsSection.className = 'relative py-24 px-4 sm:px-6 lg:px-8 bg-jawa-light overflow-hidden border-b border-jawa-gold/30';
+            creditsSection.innerHTML = `
+                <div class="absolute inset-0 batik-pattern pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto relative z-10">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <span class="text-xs font-semibold tracking-widest text-jawa-accent uppercase block mb-2">Tim Pengembang</span>
+                        <h2 class="font-serif text-3xl md:text-5xl font-bold text-jawa-primary mb-4">${config.credits.title}</h2>
+                        <div class="w-24 h-1 bg-jawa-gold mx-auto mb-6 rounded-full"></div>
+                        <p class="text-gray-700 text-sm md:text-base">${config.credits.desc}</p>
+                    </div>
+                    <div id="credits-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+                </div>
+            `;
+            document.getElementById('peraturan').after(creditsSection);
+
+            const creditsGrid = document.getElementById('credits-grid');
+            creditsGrid.innerHTML = '';
+            config.credits.people.forEach(person => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl shadow-md border border-jawa-gold/20 overflow-hidden';
+                const imageClass = person.name === 'Panji Prasetya Budi'
+                    ? 'w-full h-56 object-cover object-top'
+                    : 'w-full h-56 object-cover';
+                const photoContent = person.photo ? `
+                        <img src="${person.photo}" alt="Foto ${person.name}" class="${imageClass}" />
+                    ` : `
+                        <div class="h-56 bg-jawa-primary bg-opacity-5 flex items-center justify-center overflow-hidden">
+                            <div class="w-28 h-28 rounded-full bg-white shadow-inner border border-jawa-gold/20 flex items-center justify-center text-jawa-dark text-xs uppercase tracking-[0.2em] font-semibold">Foto</div>
+                        </div>
+                    `;
+                card.innerHTML = `
+                    <div class="overflow-hidden">
+                        ${photoContent}
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-serif text-xl font-bold text-jawa-dark mb-2">${person.name}</h3>
+                        <p class="text-jawa-accent font-semibold mb-3">${person.role}</p>
+                        <p class="text-gray-600 text-sm leading-relaxed">${person.bio}</p>
+                    </div>
+                `;
+                creditsGrid.appendChild(card);
+            });
+
+            document.getElementById("peraturan-cta-quote").innerText = `"${config.peraturan.ctaBox.quote}"`;
+            document.getElementById("peraturan-cta-translation").innerText = config.peraturan.ctaBox.translation;
+            
+            const pCtaBtn = document.getElementById("peraturan-cta-btn");
+            pCtaBtn.innerText = config.peraturan.ctaBox.btnLabel;
+            pCtaBtn.href = config.peraturan.ctaBox.btnHref;
+
+            // 6. Render Footer
+            document.getElementById("footer-brand-name").innerText = config.metadata.brandName;
+            document.getElementById("footer-about").innerText = config.footer.about;
+            document.getElementById("footer-quote").innerText = `"${config.footer.quote}"`;
+            document.getElementById("footer-quote-translation").innerText = config.footer.quoteTranslation;
+            document.getElementById("copyright-text").innerText = `© ${new Date().getFullYear()} ${config.metadata.brandName}. Hak Cipta Dilindungi.`;
+            document.getElementById("footer-philosophical").innerText = config.footer.philosophicalFooter;
+        });
+
+        // Toggle Navbar Mobile
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+            } else {
+                menuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            }
+        });
+
+    </script>
+</body>
+</html>

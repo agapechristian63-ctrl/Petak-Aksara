@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segawe - Petualangan Anatomi & Kamus Aksara Jawa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts untuk Nuansa Keraton Jawa & Modern -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        jawa: {
+                            dark: '#2C1B10',     /* Cokelat Gelap Joglo */
+                            darkest: '#130a05',  /* Hitam hangat untuk latar kontras */
+                            primary: '#4A2E1B',  /* Cokelat Hangat */
+                            brown: '#4A2E1B',    /* Warna cokelat gelap */
+                            gold: '#D4AF37',     /* Emas Klasik */
+                            goldLight: '#F3E5AB',/* Kuning Gading */
+                            goldlight: '#F3E5AB',/* Alias untuk kelas yang digunakan */
+                            light: '#FAF6F0',    /* Krem Lembut */
+                            cream: '#FAF6F0',    /* Warna teks krem */
+                            creammuted: '#E8D3A8',/* Warna teks krem lembut */
+                            paper: '#F7E9D4',    /* Kertas tua */
+                            accent: '#8C2D19'    /* Merah Bata / Sogan */
+                        }
+                    }
+                }
+            }
+        }
+        </script>
+        <style>
+  
+        /* Desain Scrollbar bertema Sogan Gelap */
+        .anatomy-symbol-image {
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.25));
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #211510;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 10px;
+            border: 2px solid #211510;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F4E9CD;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .structure-card-btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .structure-card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(154, 97, 36, 0.12);
+        }
+
+        .structure-modal-overlay {
+            backdrop-filter: blur(8px);
+        }
+
+        .structure-modal-panel {
+            box-shadow: 0 25px 60px rgba(79, 53, 32, 0.2);
+        }
+
+        /* Penyesuaian tema sinau agar UI bagian konten lebih terang dan krem */
+        #study-screen,
+        #game-screen,
+        #end-screen {
+            background: linear-gradient(135deg, #f8efe2 0%, #fdfaf4 100%) !important;
+            border-color: #d9b77a !important;
+            color: #4f3520 !important;
+            box-shadow: 0 20px 45px rgba(83, 57, 28, 0.12) !important;
+        }
+
+        #study-screen [class*="bg-jawa-dark"],
+        #study-screen [class*="bg-jawa-darkest"],
+        #study-screen [class*="bg-jawa-brown"],
+        #game-screen [class*="bg-jawa-dark"],
+        #game-screen [class*="bg-jawa-darkest"],
+        #game-screen [class*="bg-jawa-brown"],
+        #end-screen [class*="bg-jawa-dark"],
+        #end-screen [class*="bg-jawa-darkest"],
+        #end-screen [class*="bg-jawa-brown"] {
+            background-color: #fffaf0 !important;
+            color: #4f3520 !important;
+            border-color: #e8d8b8 !important;
+        }
+
+        #study-screen .border-jawa-gold\/20,
+        #game-screen .border-jawa-gold\/20,
+        #end-screen .border-jawa-gold\/20,
+        #study-screen .border-jawa-gold\/15,
+        #game-screen .border-jawa-gold\/15,
+        #end-screen .border-jawa-gold\/15,
+        #study-screen .border-jawa-gold\/10,
+        #game-screen .border-jawa-gold\/10,
+        #end-screen .border-jawa-gold\/10,
+        #study-screen .border-jawa-gold\/30,
+        #game-screen .border-jawa-gold\/30,
+        #end-screen .border-jawa-gold\/30 {
+            border-color: #e3c887 !important;
+        }
+
+        #study-screen .text-jawa-cream,
+        #game-screen .text-jawa-cream,
+        #end-screen .text-jawa-cream,
+        #study-screen .text-jawa-creammuted,
+        #game-screen .text-jawa-creammuted,
+        #end-screen .text-jawa-creammuted {
+            color: #6d5332 !important;
+        }
+
+        #study-screen .text-jawa-gold,
+        #game-screen .text-jawa-gold,
+        #end-screen .text-jawa-gold {
+            color: #9a6124 !important;
+        }
+    </style>
+    </head>
+    <body class="text-jawa-cream font-sans min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-jawa-gold selection:text-jawa-darkest" style="background-image: linear-gradient(to bottom, rgba(44, 27, 16, 0.88), rgba(44, 27, 16, 0.98)), url('../assets/bg/ilustrasi-hero.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+
+    <!-- HEADER / NAVIGATION BAR (TEMA COKELAT SOGAN GELAP & EMAS) -->
+    <header class="border-b-2 border-jawa-gold/30 px-6 py-4 bg-jawa-dark sticky top-0 z-50 shadow-md">
+        <div class="max-w-5xl mx-auto flex justify-between items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl text-jawa-gold font-bold">ꦲ</span>
+                <div>
+                    <h1 class="font-serif font-bold text-xl tracking-wide text-jawa-gold">Sinau Disik</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-jawa-creammuted font-bold">Gerbang Sinau Aksara Jawa</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="../index.html" class="px-3 py-2 text-xs font-bold rounded-xl bg-jawa-brown hover:bg-jawa-darkest/80 text-jawa-cream border border-jawa-gold/20 transition-all duration-300">
+                    ← Balik
+                </a>
+                <!-- Status Indikator Modul -->
+                <span class="text-xs font-bold bg-jawa-gold text-jawa-darkest px-4 py-1.5 rounded-full shadow-md">
+                    Sinau Aksara Jawa
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-8">
+
+        <!-- ================= STAGE 1: KAMUS SINGKAT & VISUALISASI (LANGSUNG TAMPIL SEJAK AWAL) ================= -->
+        <div id="study-screen" class="relative w-full max-w-5xl bg-jawa-dark border-2 border-jawa-gold/20 rounded-3xl p-6 md:p-10 shadow-2xl transition-all duration-500 transform scale-100 opacity-100">
+            
+            <div class="text-center mb-8 border-b border-jawa-brown/50 pb-6">
+                <span class="text-xs font-bold text-jawa-darkest bg-jawa-gold px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-md">📖 Sinau Aksara Jawa</span>
+                <h3 class="font-serif text-3xl md:text-4xl font-extrabold text-jawa-gold mt-3">Materi & Kamus Aksara Jawa</h3>
+                <p class="text-sm text-jawa-creammuted mt-2 max-w-xl mx-auto"></p>
+            </div>
+
+            <!-- BAGIAN 1: 6 ELEMEN ANATOMI GORESAN -->
+            <div class="mb-10">
+                <h4 class="text-sm font-bold text-jawa-gold uppercase tracking-widest mb-4 border-l-4 border-jawa-gold pl-3">I. 7 Elemen Anatomi Dasar</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    
+                    <!-- 1. Kaki -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Kaki" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Kaki</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Garis tegak ke arah atas sebagai tiang tumpuan utama.</p>
+                    </div>
+
+                    <!-- 2. Lengkung -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Lengkung" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Lengkung</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Hanya bagian lengkungan atasnya huruf <strong>'n'</strong> saja (tanpa tiang vertikal).</p>
+                    </div>
+
+                    <!-- 3. Gerigi -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Gerigi" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Gerigi</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Lekukan penghubung pada aksara (contoh pada <strong>Dha</strong> ꦝ).</p>
+                    </div>
+
+                    <!-- 4. Cucuk -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Cucuk" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Cucuk</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Bentuk seperti paruh di aksara Jawa (<strong>Dha</strong> ꦝ, <strong>Ca</strong> ꦕ, <strong>Wa</strong> ꦮ).</p>
+                    </div>
+
+                    <!-- 5. Jembatan -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Jembatan" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Jembatan</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Garis mendatar sebagai penghubung tengah (<strong>Na</strong> ꦤ & <strong>Ka</strong> ꦏ).</p>
+                    </div>
+
+                    <!-- 6. Simpul -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Simpul" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Simpul</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Bentuk melingkar kecil mengunci (pada <strong>Sa</strong> ꦱ & <strong>Ca</strong> ꦕ).</p>
+                    </div>
+
+                    <!-- 7. Jarak -->
+                    <div class="bg-jawa-brown/40 border border-jawa-gold/15 rounded-2xl p-4 flex flex-col items-center text-center hover:border-jawa-gold/40 transition-colors">
+                        <div class="w-12 h-12 bg-jawa-darkest/80 rounded-full flex items-center justify-center mb-3 border border-jawa-gold/20">
+                            <div data-anatomy-icon="Jarak" class="w-full h-full flex items-center justify-center"></div>
+                        </div>
+                        <span class="font-bold text-xs text-jawa-gold uppercase tracking-wider mb-2">Jarak</span>
+                        <p class="text-[10px] text-jawa-creammuted leading-relaxed">Garis mendatar sebagai penghubung bawah pada aksara (<strong>Ha</strong> ꦲ, <strong>La</strong> ꦭ, <strong>Pa</strong> ꦥ).</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BAGIAN 2: KAMUS NORMAL AKSARA JAWA (TAB INTERAKTIF) -->
+            <div class="mb-10 bg-jawa-brown/30 rounded-2xl p-5 border border-jawa-gold/10">
+                <h4 class="text-sm font-bold text-jawa-gold uppercase tracking-widest mb-5 border-l-4 border-jawa-gold pl-3">II. Kamus Aksara Jawa</h4>
+                
+                <!-- Navigasi Tab -->
+                <div class="flex flex-wrap border-b border-jawa-gold/20 gap-2 mb-8">
+                    <button onclick="switchTab('tab-nglegena')" id="btn-tab-nglegena" class="px-4 py-2 text-xs font-bold uppercase rounded-t-xl transition-all duration-300 bg-jawa-gold text-jawa-darkest">
+                        ꦔ꧀ꦭꦺꦭꦺꦒꦺꦤ Aksara Nglegena
+                    </button>
+                    <button onclick="switchTab('tab-sandangan')" id="btn-tab-sandangan" class="px-4 py-2 text-xs font-bold uppercase rounded-t-xl transition-all duration-300 hover:bg-jawa-brown text-jawa-cream">
+                        ꦱꦤ꧀ꦝꦔꦤ꧀ Sandangan
+                    </button>
+                </div>
+
+                <!-- Konten Tab 1: Nglegena -->
+                <div id="tab-nglegena" class="tab-content block">
+                    <p class="text-xs text-jawa-creammuted mb-5">Aksara dasar dalam aksara Jawa yang berjumlah 20 karakter sebelum mendapatkan sandangan vokal:</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-3.5">
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦲ</span><p class="text-[10px] font-bold">Ha</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦤ</span><p class="text-[10px] font-bold">Na</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦕ</span><p class="text-[10px] font-bold">Ca</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦫ</span><p class="text-[10px] font-bold">Ra</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦏ</span><p class="text-[10px] font-bold">Ka</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦢ</span><p class="text-[10px] font-bold">Da</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦠ</span><p class="text-[10px] font-bold">Ta</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦱ</span><p class="text-[10px] font-bold">Sa</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦮ</span><p class="text-[10px] font-bold">Wa</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦭ</span><p class="text-[10px] font-bold">La</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦥ</span><p class="text-[10px] font-bold">Pa</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦝ</span><p class="text-[10px] font-bold">Dha</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦗ</span><p class="text-[10px] font-bold">Ja</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦪ</span><p class="text-[10px] font-bold">Ya</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦚ</span><p class="text-[10px] font-bold">Nya</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦩ</span><p class="text-[10px] font-bold">Ma</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦒ</span><p class="text-[10px] font-bold">Ga</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦧ</span><p class="text-[10px] font-bold">Ba</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦛ</span><p class="text-[10px] font-bold">Tha</p></div>
+                        <div class="bg-jawa-darkest/80 p-2.5 rounded-xl text-center border border-jawa-gold/10 hover:border-jawa-gold/30"><span class="text-2xl font-serif text-jawa-gold">ꦔ</span><p class="text-[10px] font-bold">Nga</p></div>
+                    </div>
+                </div>
+
+                <!-- Konten Tab 2: Sandangan -->
+                <div id="tab-sandangan" class="tab-content hidden">
+                    <p class="text-xs text-jawa-creammuted mb-5">Simbol penunjuk bunyi vokal atau penambah fonem mati di akhir suku kata:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦶ (Wulu)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi vokal -i</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Siji</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦿ (Suku)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi vokal -u</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Buku</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦼ (Pepet)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi vokal -é (lemah)</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Sega</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦺ (Taling)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi vokal -e (lebar)</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Sate</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦺꦴ (Taling Tarung)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi vokal -o</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Loro</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦂ (Layar)</span>
+                            <p class="text-xs font-bold mt-1">Desis mati -r</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Pasar</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦁ (Cecak)</span>
+                            <p class="text-xs font-bold mt-1">Bunyi mati -ng</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Gawang</span>
+                        </div>
+                        <div class="bg-jawa-darkest/80 p-3 rounded-xl border border-jawa-gold/10">
+                            <span class="text-xl text-jawa-gold font-bold">ꦃ (Wignyan)</span>
+                            <p class="text-xs font-bold mt-1">Desis mati -h</p>
+                            <span class="text-[10px] text-jawa-creammuted">Contoh: Gajah</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-jawa-darkest/70 border border-jawa-gold/10 rounded-2xl p-6 shadow-inner">
+                    <h4 class="text-xs font-bold text-jawa-gold uppercase tracking-widest mb-4 text-center">Visualisasi Struktur Contoh Aksara Jawa Baru</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-stretch">
+                        <button type="button" onclick="openStructureModal('Dha')" class="structure-card-btn bg-jawa-dark p-4 border border-jawa-gold/20 rounded-xl text-center flex flex-col justify-between hover:scale-[1.02] transition-transform">
+                            <div>
+                                <span class="text-5xl font-serif text-jawa-gold block mb-2">ꦝ</span>
+                                <span class="text-[11px] font-bold bg-jawa-gold/10 text-jawa-gold px-2 py-0.5 rounded border border-jawa-gold/20">Dha (ꦝ)</span>
+                            </div>
+                            <p class="text-[11px] text-jawa-cream mt-3 leading-relaxed">Klik untuk melihat susunan simbol pembentuknya.</p>
+                        </button>
+                        <button type="button" onclick="openStructureModal('Ca')" class="structure-card-btn bg-jawa-dark p-4 border border-jawa-gold/20 rounded-xl text-center flex flex-col justify-between hover:scale-[1.02] transition-transform">
+                            <div>
+                                <span class="text-5xl font-serif text-jawa-gold block mb-2">ꦕ</span>
+                                <span class="text-[11px] font-bold bg-jawa-gold/10 text-jawa-gold px-2 py-0.5 rounded border border-jawa-gold/20">Ca (ꦕ)</span>
+                            </div>
+                            <p class="text-[11px] text-jawa-cream mt-3 leading-relaxed">Klik untuk melihat susunan simbol pembentuknya.</p>
+                        </button>
+                        <button type="button" onclick="openStructureModal('Na')" class="structure-card-btn bg-jawa-dark p-4 border border-jawa-gold/20 rounded-xl text-center flex flex-col justify-between hover:scale-[1.02] transition-transform">
+                            <div>
+                                <span class="text-5xl font-serif text-jawa-gold block mb-2">ꦤ</span>
+                                <span class="text-[11px] font-bold bg-jawa-gold/10 text-jawa-gold px-2 py-0.5 rounded border border-jawa-gold/20">Na (ꦤ)</span>
+                            </div>
+                            <p class="text-[11px] text-jawa-cream mt-3 leading-relaxed">Klik untuk melihat susunan simbol pembentuknya.</p>
+                        </button>
+                        <button type="button" onclick="openStructureModal('Sa')" class="structure-card-btn bg-jawa-dark p-4 border border-jawa-gold/20 rounded-xl text-center flex flex-col justify-between hover:scale-[1.02] transition-transform">
+                            <div>
+                                <span class="text-5xl font-serif text-jawa-gold block mb-2">ꦱ</span>
+                                <span class="text-[11px] font-bold bg-jawa-gold/10 text-jawa-gold px-2 py-0.5 rounded border border-jawa-gold/20">Sa (ꦱ)</span>
+                            </div>
+                            <p class="text-[11px] text-jawa-cream mt-3 leading-relaxed">Klik untuk melihat susunan simbol pembentuknya.</p>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tombol Berwarna Cokelat Jelas Menuju Kuis -->
+            <div class="text-center">
+                <button onclick="goToQuizStage()" class="px-8 py-4 bg-jawa-gold hover:bg-jawa-goldlight text-jawa-darkest font-extrabold rounded-2xl shadow-lg transition-all duration-300 text-lg flex items-center justify-center gap-3 mx-auto group">
+                    <span>Mulai Kuis Sekarang! 🚀</span>
+                    <span class="group-hover:translate-x-1 transition-transform">➔</span>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- ================= STAGE 2: GAMEPLAY SCREEN ================= -->
+        <div id="game-screen" class="hidden w-full max-w-3xl bg-jawa-dark border-2 border-jawa-gold/20 rounded-3xl p-6 md:p-10 shadow-2xl transition-all duration-500 transform scale-95 opacity-0">
+            <!-- Progress & Score Header -->
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-6 pb-4 border-b border-jawa-brown/50">
+                <div class="flex items-center gap-2">
+                    <button onclick="backToMainMenu('game-screen')" class="px-3 py-2 text-xs font-bold rounded-xl bg-jawa-brown hover:bg-jawa-darkest/80 text-jawa-cream border border-jawa-gold/20 transition-all duration-300">
+                        ← Kembali
+                    </button>
+                    <div class="text-sm font-semibold text-jawa-creammuted">
+                        Tantangan Ke <span id="current-question-num" class="text-jawa-gold text-lg font-bold">1</span> dari <span id="total-questions-num" class="font-bold">5</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-jawa-gold/10 px-4 py-1.5 rounded-full border border-jawa-gold/30">
+                    <span class="text-sm font-bold text-jawa-gold">Skor Berjalan:</span>
+                    <span id="score-val" class="font-bold text-jawa-cream text-lg">0</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-jawa-darkest rounded-full h-2.5 mb-8 border border-jawa-gold/10">
+                <div id="progress-bar" class="bg-jawa-gold h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+            </div>
+
+            <!-- Pertanyaan Utama -->
+            <div class="text-center mb-8">
+                <h3 class="text-xs font-bold text-jawa-gold uppercase tracking-widest mb-3">Tebak Aksaranya berdasarkan urutan elemen berikut:</h3>
+                
+                <!-- Box Formula Dinamis -->
+                <div id="formula-display" class="bg-jawa-darkest border-2 border-dashed border-jawa-gold/30 rounded-2xl p-6 max-w-xl mx-auto flex flex-wrap gap-2.5 justify-center items-center min-h-[100px] shadow-inner">
+                    <!-- Pola Goresan dimasukkan lewat JS -->
+                </div>
+            </div>
+
+            <!-- Area Opsi Jawaban -->
+            <div class="max-w-xl mx-auto">
+                <div class="text-xs font-bold text-jawa-creammuted uppercase tracking-wider mb-4 text-center">Pilihlah salah satu aksara di bawah ini</div>
+                <div id="options-container" class="grid grid-cols-2 gap-4">
+                    <!-- Tombol pilihan dimuat via JS -->
+                </div>
+            </div>
+
+            <!-- Hasil Evaluasi Instan -->
+            <div id="feedback-area" class="mt-8 min-h-[70px] flex items-center justify-center text-center">
+                <div id="feedback-box" class="hidden w-full max-w-xl p-4 rounded-xl flex items-center justify-between transition-all duration-300">
+                    <div class="flex items-center gap-3">
+                        <span id="feedback-emoji" class="text-2xl"></span>
+                        <p id="feedback-text" class="font-semibold text-sm text-left text-jawa-cream"></p>
+                    </div>
+                    <button id="next-button" onclick="nextQuestion()" class="px-6 py-2.5 bg-jawa-gold text-jawa-darkest rounded-xl text-xs font-bold hover:bg-jawa-goldlight transition-colors whitespace-nowrap">
+                        Berikutnya ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= STAGE 3: SCOREBOARD / END SCREEN ================= -->
+        <div id="end-screen" class="hidden w-full max-w-md bg-jawa-dark border-2 border-jawa-gold/20 rounded-3xl p-8 md:p-10 shadow-2xl text-center transition-all duration-500 transform scale-95 opacity-0">
+            <span class="text-6xl">🏆</span>
+            <h2 class="font-serif text-3xl font-extrabold text-jawa-gold mt-4 mb-2">Petualangan Selesai</h2>
+            <p class="text-xs text-jawa-creammuted mb-6">Kamu telah berhasil mempelajari sekaligus menguji pemahaman elemen Aksara Jawa!</p>
+            
+            <!-- Kartu Skor -->
+            <div class="bg-jawa-darkest border-2 border-jawa-gold/20 rounded-2xl p-6 mb-8 max-w-xs mx-auto shadow-inner">
+                <p class="text-xs text-jawa-gold uppercase font-bold tracking-wider mb-1">Skor Akhir Anda</p>
+                <div class="text-5xl font-serif font-extrabold text-jawa-gold mb-2" id="final-score">100</div>
+                <p class="text-xs text-jawa-creammuted leading-relaxed" id="final-evaluation-text">Sempurna! Kamu adalah master sejati pola rupa Aksara Jawa!</p>
+            </div>
+
+            <!-- Opsi Tombol Cokelat Kontras Tinggi -->
+            <div class="flex flex-col gap-3">
+                <button onclick="restartGame()" class="w-full px-6 py-3.5 bg-jawa-gold text-jawa-darkest font-bold rounded-xl shadow-lg hover:bg-jawa-goldlight transition-all duration-300">
+                    🔄 Mainkan Ulang Kuis
+                </button>
+                <button onclick="backToMainMenu('end-screen')" class="w-full px-6 py-3 bg-jawa-brown hover:bg-jawa-darkest/80 text-jawa-cream font-semibold rounded-xl transition-all duration-300 border border-jawa-gold/20">
+                    📖 Kembali Baca Panduan
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-6 px-6 border-t border-jawa-gold/10 bg-jawa-dark text-center text-xs text-jawa-creammuted">
+        <p>© 2026 Segawe Aksara Jawa. Pelajari anatomi fisik aksara dengan cara seru dan sehat.</p>
+    </footer>
+
+    <div id="structure-modal" class="structure-modal-overlay hidden fixed inset-0 z-[60] bg-black/40 flex items-center justify-center p-4">
+        <div class="structure-modal-panel w-full max-w-2xl rounded-3xl border border-jawa-gold/20 bg-[#fffaf0] p-6 md:p-8 text-jawa-dark">
+            <div class="flex justify-between items-start gap-3 mb-5">
+                <div>
+                    <p class="text-[11px] uppercase tracking-[0.3em] font-bold text-jawa-gold">Visualisasi Struktur</p>
+                    <h4 id="structure-modal-title" class="text-2xl font-serif font-extrabold text-jawa-brown mt-1"></h4>
+                </div>
+                <button type="button" onclick="closeStructureModal()" class="px-3 py-2 rounded-full border border-jawa-gold/20 bg-white text-jawa-brown text-sm font-semibold hover:bg-jawa-gold/10 transition-colors">Tutup</button>
+            </div>
+            <p id="structure-modal-description" class="text-sm leading-relaxed text-jawa-dark/80 mb-5"></p>
+            <div id="structure-modal-formula" class="flex flex-wrap gap-2.5"></div>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi gambar simbol anatomi dasar. Isi image untuk mengganti simbol tanpa mengubah soal.
+        const anatomySymbolConfig = {
+            Kaki: {
+                label: 'Kaki',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8v32" /></svg>`
+            },
+            Lengkung: {
+                label: 'Lengkung',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M10 30c0-10 28-10 28 0" /></svg>`
+            },
+            Gerigi: {
+                label: 'Gerigi',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 24l8 10 8-16 8 16 8-10" /></svg>`
+            },
+            Cucuk: {
+                label: 'Cucuk',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 24h20" /><path d="M28 24l8 8" /><path d="M36 32l-8 0" /></svg>`
+            },
+            Jembatan: {
+                label: 'Jembatan',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M8 24h24" /><path d="M32 24c0 8-6 12-10 14" /></svg>`
+            },
+            Simpul: {
+                label: 'Simpul',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="6" /><path d="M12 28c3-8 9-10 12-10s9 2 12 10" /></svg>`
+            },
+            Jarak: {
+                label: 'Jarak',
+                image: '',
+                svg: `<svg class="w-full h-full text-jawa-gold" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M8 24h32" /></svg>`
+            }
+        };
+
+        function renderAnatomySymbol(step, extraClass = 'w-8 h-8') {
+            const config = anatomySymbolConfig[step] || anatomySymbolConfig.Kaki;
+            if (config.image) {
+                return `<img src="${config.image}" alt="${config.label}" class="anatomy-symbol-image ${extraClass} rounded-md" />`;
+            }
+            if (config.svg) {
+                return `<div class="${extraClass} flex items-center justify-center text-jawa-gold">${config.svg}</div>`;
+            }
+            return `<span class="${extraClass} flex items-center justify-center text-jawa-gold">⚙️</span>`;
+        }
+
+        function populateAnatomySymbols() {
+            document.querySelectorAll('[data-anatomy-icon]').forEach(el => {
+                const step = el.getAttribute('data-anatomy-icon');
+                el.innerHTML = renderAnatomySymbol(step, 'w-7 h-7 text-xl');
+            });
+        }
+
+        function openStructureModal(nama) {
+            const item = aksaraDatabase.find(entry => entry.nama === nama);
+            if (!item) return;
+
+            document.getElementById('structure-modal-title').innerText = `${item.nama} (${item.aksara})`;
+            document.getElementById('structure-modal-description').innerText = item.deskripsi;
+
+            const formulaContainer = document.getElementById('structure-modal-formula');
+            formulaContainer.innerHTML = '';
+
+            item.formula.forEach((step, index) => {
+                const badge = document.createElement('div');
+                badge.className = 'flex items-center gap-2 rounded-2xl border border-jawa-gold/20 bg-white px-3 py-2 text-sm font-semibold text-jawa-brown';
+                badge.innerHTML = `
+                    ${renderAnatomySymbol(step, 'w-5 h-5')}
+                    <span>${step}</span>
+                    ${index < item.formula.length - 1 ? '<span class="text-jawa-gold">→</span>' : ''}
+                `;
+                formulaContainer.appendChild(badge);
+            });
+
+            document.getElementById('structure-modal').classList.remove('hidden');
+        }
+
+        function closeStructureModal() {
+            document.getElementById('structure-modal').classList.add('hidden');
+        }
+
+        // Database Rumus Anatomi Aksara Jawa Berdasarkan Formula & Aturan Baru
+        const aksaraDatabase = [
+            {
+                aksara: "ꦝ",
+                nama: "Dha",
+                formula: ["Kaki", "Cucuk", "Kaki", "Gerigi", "Kaki", "Lengkung", "Kaki"],
+                deskripsi: "Susunan ini dimulai dari kaki penumpu, lalu paruh lancip ('Cucuk'), kemudian gerigi sebagai penghubung, dan ditutup dengan lengkung yang tetap dibingkai kaki."
+            },
+            {
+                aksara: "ꦕ",
+                nama: "Ca",
+                formula: ["Kaki", "Lengkung", "Kaki", "Simpul", "Kaki", "Cucuk", "Kaki"],
+                deskripsi: "Susunan ini menampilkan pola kaki-lengkung-kaki, lalu simpul, dan diakhiri dengan cucuk yang tetap dibingkai kaki."
+            },
+            {
+                aksara: "ꦮ",
+                nama: "Wa",
+                formula: ["Kaki", "Lengkung", "Kaki", "Jarak", "Kaki", "Cucuk", "Kaki",],
+                deskripsi: "Memiliki gelombang tubuh dengan paruh lancip ('Cucuk') khas di bagian tengah atasnya, disertai kaki yang menjaga bentuk keseluruhan."
+            },
+            {
+                aksara: "ꦤ",
+                nama: "Na",
+                formula: ["Kaki", "Lengkung", "Kaki", "Jembatan", "Kaki", "Lengkung", "Kaki"],
+                deskripsi: "Bagian 'n' pertama yang dihubungkan dengan garis datar ('Jembatan') dan tetap dibingkai oleh kaki serta lengkung pada setiap sisi bentuknya."
+            },
+            {
+                aksara: "ꦏ",
+                nama: "Ka",
+                formula: ["Kaki", "Lengkung", "Kaki", "Jembatan", "Kaki", "Lengkung", "Kaki", "Lengkung", "Kaki"],
+                deskripsi: "Memiliki jembatan lurus ('Jembatan') penengah sebelum menuju lengkungan penutup, lalu diakhiri dengan tambahan lengkungan dan kaki."
+            },
+            {
+                aksara: "ꦱ",
+                nama: "Sa",
+                formula: ["Kaki", "Lengkung", "Kaki", "Simpul", "Kaki", "Lengkung", "Kaki"],
+                deskripsi: "Kombinasi ini menampilkan susunan kaki-lengkung-kaki dengan simpul di bagian tengah, lalu kembali dilanjutkan dengan lengkung dan kaki sebagai penopang bentuk."
+
+            }
+        ];
+
+        // Pengaturan utama kuis — ubah nilai di sini untuk mengatur logika permainan
+        const quizSettings = {
+            totalQuestions: 5,
+            pointsPerCorrectAnswer: 20,
+            perfectScore: 100,
+            excellentThreshold: 60,
+            shuffleQuestions: true,
+            shuffleOptions: true
+        };
+
+        const elementRoleMap = {
+            Kaki: 'inti',
+            Lengkung: 'inti',
+            Cucuk: 'inti',
+            Gerigi: 'penghubung',
+            Jembatan: 'penghubung',
+            Jarak: 'penghubung',
+            Simpul: 'penghubung'
+        };
+
+        function getStructureProfile(formula) {
+            const profile = {
+                inti: 0,
+                penghubung: 0,
+                connectors: []
+            };
+
+            formula.forEach(step => {
+                const role = elementRoleMap[step] || 'inti';
+                profile[role] += 1;
+                if (role === 'penghubung') {
+                    profile.connectors.push(step);
+                }
+            });
+
+            profile.hasBothParts = profile.inti > 0 && profile.penghubung > 0;
+            return profile;
+        }
+
+        function getQuestionPool() {
+            const pool = [...aksaraDatabase].map(item => ({
+                ...item,
+                structureProfile: getStructureProfile(item.formula)
+            }));
+
+            if (quizSettings.shuffleQuestions) {
+                pool.sort(() => Math.random() - 0.5);
+            }
+
+            const balancedPool = pool.sort((a, b) => {
+                const aBalance = Number(a.structureProfile.hasBothParts);
+                const bBalance = Number(b.structureProfile.hasBothParts);
+                if (aBalance !== bBalance) {
+                    return bBalance - aBalance;
+                }
+                return b.structureProfile.penghubung - a.structureProfile.penghubung;
+            });
+
+            const randomizedPool = [...balancedPool].sort(() => Math.random() - 0.5);
+            return randomizedPool.slice(0, quizSettings.totalQuestions);
+        }
+
+        function buildAnswerOptions(correctQuestion) {
+            const incorrectCandidates = aksaraDatabase
+                .filter(item => item.nama !== correctQuestion.nama);
+
+            const shuffledIncorrect = quizSettings.shuffleOptions
+                ? [...incorrectCandidates].sort(() => Math.random() - 0.5)
+                : incorrectCandidates;
+
+            const allOptions = [correctQuestion, ...shuffledIncorrect.slice(0, 3)];
+            return quizSettings.shuffleOptions ? allOptions.sort(() => Math.random() - 0.5) : allOptions;
+        }
+
+        // Status State Permainan
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let selectedQuestions = [];
+
+        // Tab Switcher Logic
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.add('hidden'));
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Reset button active classes
+            const buttons = [
+                { id: 'btn-tab-nglegena', defaultClass: 'hover:bg-jawa-brown text-jawa-cream', activeClass: 'bg-jawa-gold text-jawa-darkest' },
+                { id: 'btn-tab-sandangan', defaultClass: 'hover:bg-jawa-brown text-jawa-cream', activeClass: 'bg-jawa-gold text-jawa-darkest' }
+            ];
+
+            buttons.forEach(btnInfo => {
+                const btn = document.getElementById(btnInfo.id);
+                if (btnInfo.id === 'btn-' + tabId) {
+                    btn.className = `px-4 py-2 text-xs font-bold uppercase rounded-t-xl transition-all duration-300 ${btnInfo.activeClass}`;
+                } else {
+                    btn.className = `px-4 py-2 text-xs font-bold uppercase rounded-t-xl transition-all duration-300 ${btnInfo.defaultClass}`;
+                }
+            });
+        }
+
+        // Navigasi Layar
+        function switchScreen(fromId, toId) {
+            const fromScreen = document.getElementById(fromId);
+            const toScreen = document.getElementById(toId);
+
+            fromScreen.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                fromScreen.classList.add('hidden');
+                toScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    toScreen.classList.remove('opacity-0', 'scale-95');
+                }, 50);
+            }, 300);
+        }
+
+        // Tahap 1 (Kamus) -> Tahap 2 (Kuis)
+        function goToQuizStage() {
+            score = 0;
+            currentQuestionIndex = 0;
+            document.getElementById('score-val').innerText = score;
+            
+            // Ambil daftar soal sesuai pengaturan di atas
+            selectedQuestions = getQuestionPool();
+
+            // Pastikan tantangan ke-2 selalu memakai aksara Da
+            const daQuestion = aksaraDatabase.find(item => item.nama === 'Da');
+            if (daQuestion && selectedQuestions.length > 1) {
+                selectedQuestions[1] = {
+                    ...daQuestion,
+                    structureProfile: getStructureProfile(daQuestion.formula)
+                };
+            }
+            
+            switchScreen('study-screen', 'game-screen');
+            loadQuestion();
+        }
+
+        populateAnatomySymbols();
+
+        // Memuat Soal Aktif
+        function loadQuestion() {
+            const q = selectedQuestions[currentQuestionIndex];
+            
+            // Atur Header Progress
+            document.getElementById('current-question-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('total-questions-num').innerText = selectedQuestions.length;
+            
+            const progressPercent = ((currentQuestionIndex + 1) / selectedQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Atur Tampilan Formula Anatomi
+            const formulaDisplay = document.getElementById('formula-display');
+            formulaDisplay.innerHTML = '';
+            
+            q.formula.forEach((step, i) => {
+                let badgeStyle = "border-gray-200 bg-gray-50 text-gray-700";
+                let emoji = "⚙️";
+                if (step === "Kaki") { badgeStyle = "border-amber-600 bg-amber-500/20 text-amber-300"; emoji = "🦵"; }
+                if (step === "Lengkung") { badgeStyle = "border-orange-500 bg-orange-500/20 text-orange-300"; emoji = "🔄"; }
+                if (step === "Gerigi") { badgeStyle = "border-yellow-500 bg-yellow-500/20 text-yellow-300"; emoji = "⚙️"; }
+                if (step === "Cucuk") { badgeStyle = "border-red-500 bg-red-500/20 text-red-300"; emoji = "🦅"; }
+                if (step === "Jembatan") { badgeStyle = "border-blue-500 bg-blue-500/20 text-blue-300"; emoji = "➖"; }
+                if (step === "Simpul") { badgeStyle = "border-teal-500 bg-teal-500/20 text-teal-300"; emoji = "🌀"; }
+
+                formulaDisplay.innerHTML += `
+                    <div class="flex items-center gap-1.5 animate-bounce" style="animation-delay: ${i * 70}ms">
+                        <span class="px-2.5 py-1.5 border rounded-xl text-xs font-bold flex items-center gap-1.5 ${badgeStyle}">
+                            ${renderAnatomySymbol(step, 'w-5 h-5 text-xs')}
+                            <span class="ml-1">${step}</span>
+                        </span>
+                        ${i < q.formula.length - 1 ? '<span class="text-jawa-gold font-bold text-xs">➔</span>' : ''}
+                    </div>
+                `;
+            });
+
+            // Siapkan Opsi Jawaban (3 opsi salah, 1 opsi benar)
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const allOptions = buildAnswerOptions(q);
+
+            allOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-5 bg-jawa-darkest/80 border border-jawa-gold/20 hover:border-jawa-gold hover:bg-jawa-brown rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-200 active:scale-95 group focus:outline-none";
+                btn.onclick = () => selectAnswer(btn, opt.nama === q.nama, opt.nama, opt.aksara);
+                btn.innerHTML = `
+                    <span class="text-4xl text-jawa-cream group-hover:text-jawa-gold font-bold transition-colors font-serif">${opt.aksara}</span>
+                    <span class="text-xs font-bold text-jawa-creammuted group-hover:text-jawa-cream uppercase tracking-wide">Aksara ${opt.nama}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Sembunyikan Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.add('hidden');
+        }
+
+        // Mengecek Jawaban
+        function selectAnswer(clickedBtn, isCorrect, ansName, ansChar) {
+            const buttons = document.querySelectorAll('#options-container button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackEmoji = document.getElementById('feedback-emoji');
+            const feedbackText = document.getElementById('feedback-text');
+
+            if (isCorrect) {
+                score += quizSettings.pointsPerCorrectAnswer;
+                document.getElementById('score-val').innerText = score;
+                
+                clickedBtn.classList.remove('bg-jawa-paper/60', 'border-jawa-gold/20');
+                clickedBtn.classList.add('bg-emerald-950/80', 'border-emerald-500', 'ring-2', 'ring-emerald-400');
+                
+                feedbackEmoji.innerText = "✨";
+                feedbackText.innerHTML = `<span class="text-emerald-400 font-bold">Luar biasa tepat!</span> Goresan tersebut memang milik aksara <strong class="font-serif text-xl text-jawa-gold">${ansChar} (${ansName})</strong>.`;
+                feedbackBox.className = "w-full max-w-xl p-4 rounded-xl flex items-center justify-between bg-emerald-950/60 border border-emerald-500 shadow-sm";
+            } else {
+                clickedBtn.classList.remove('bg-jawa-paper/60', 'border-jawa-gold/20');
+                clickedBtn.classList.add('bg-rose-950/80', 'border-rose-500', 'ring-2', 'ring-rose-400');
+
+                const correctItem = selectedQuestions[currentQuestionIndex];
+                buttons.forEach(btn => {
+                    if (btn.querySelector('.font-serif').innerText === correctItem.aksara) {
+                        btn.classList.add('border-emerald-500', 'bg-emerald-950/60', 'ring-1', 'ring-emerald-400');
+                    }
+                });
+
+                feedbackEmoji.innerText = "😢";
+                feedbackText.innerHTML = `<span class="text-rose-400 font-bold">Wah, belum tepat.</span> Struktur ini adalah milik aksara <strong class="font-serif text-xl text-jawa-gold">${correctItem.aksara} (${correctItem.nama})</strong>.`;
+                feedbackBox.className = "w-full max-w-xl p-4 rounded-xl flex items-center justify-between bg-rose-950/60 border border-rose-500 shadow-sm";
+            }
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        // Lanjut ke pertanyaan berikutnya
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < selectedQuestions.length) {
+                loadQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        // Menampilkan Layar Skor Akhir
+        function showEndScreen() {
+            document.getElementById('final-score').innerText = score;
+            
+            const evalText = document.getElementById('final-evaluation-text');
+            if (score >= quizSettings.perfectScore) {
+                evalText.innerText = "Luar biasa! Kamu memahami seluruh anatomi goresan Aksara Jawa secara sempurna!";
+            } else if (score >= quizSettings.excellentThreshold) {
+                evalText.innerText = "Sangat bagus! Kemampuan analisismu sudah sangat matang.";
+            } else {
+                evalText.innerText = "Jangan putus asa! Kamu bisa mengulang membaca Panduan Kamus di atas.";
+            }
+
+            switchScreen('game-screen', 'end-screen');
+        }
+
+        // Mulai ulang permainan
+        function restartGame() {
+            switchScreen('end-screen', 'game-screen');
+            goToQuizStage();
+        }
+
+        // Kembali ke Panduan Utama
+        function backToMainMenu(fromScreen = 'end-screen') {
+            switchScreen(fromScreen, 'study-screen');
+        }
+    </script>
+</body>
+</html>

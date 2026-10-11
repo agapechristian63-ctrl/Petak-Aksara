@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petak Aksara Jawa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    
+    <div class="spotlight-layer" id="spotlight"></div>
+    <div id="game-modal"><div class="modal-content" id="modal-inner"></div></div>
+
+    <div class="world-container">
+        <div class="board-3d" id="main-board">
+            <div id="grid" class="grid-papan">
+                <div class="center-area">
+                    <div class="center-circle">
+                        <img src="../assets/petak/papan-tengah.webp" alt="Papan tengah" class="center-image">
+                    </div>
+                </div>
+            </div>
+            <div id="pion-container" style="position: absolute; top:0; left:0; width:100%; height:100%; transform-style: preserve-3d; pointer-events: none;"></div>
+        </div>
+    </div>
+
+    <button id="back-btn" class="left-action-btn" onclick="goBack()">← Balik</button>
+    <button id="end-game-btn" class="left-action-btn end-game-btn" onclick="showScoreboard()">Purna</button>
+
+    <div class="ui-panel" id="player-list"></div>
+    <div id="right-assets-popup" class="right-assets-popup is-visible">
+        <div class="mb-3">
+            <h3 class="font-['Cinzel'] text-sm font-bold text-amber-400 tracking-wide">🏠 Aset Pemain</h3>
+        </div>
+        <div id="right-assets-content" class="space-y-2 text-[11px]"></div>
+    </div>
+    <button class="dice-btn" id="roll-btn" onclick="rollDice()">KOCOK DADU</button>
+
+    <div id="dice-overlay">
+        <div class="dice-container" id="dice-cube">
+            <div class="dice-face face-1">꧑</div><div class="dice-face face-2">꧒</div><div class="dice-face face-3">꧓</div>
+            <div class="dice-face face-4">꧔</div><div class="dice-face face-5">꧕</div><div class="dice-face face-6">꧖</div>
+        </div>
+    </div>
+    <div id="left-popup" class="fixed top-1/2 left-0 -translate-x-full -translate-y-1/2 z-[999] w-72 bg-amber-950/95 border-r-4 border-y border-amber-500 p-5 rounded-r-2xl shadow-[5px_0px_25px_rgba(0,0,0,0.5)] transition-transform duration-500 ease-out backdrop-blur-sm text-amber-100 font-['Lora']">
+        <h3 class="font-['Cinzel'] text-lg font-bold text-amber-400 border-b border-amber-500/30 pb-2 mb-3 tracking-wide">
+            📜 Tata Cara Dolanan
+        </h3>
+        <div id="left-popup-notes" class="space-y-3 mb-5">
+            <div class="bg-amber-900/90 border border-amber-500 p-3 rounded-xl text-[11px] leading-relaxed">
+                Kocok dadu kanggo . Jawab tantangan aksara Jawa di setiap petak untuk mempertahankan posisi dan memenangkan permainan!
+            </div>
+            <div class="bg-amber-900/90 border border-amber-500 p-3 rounded-xl text-[11px] leading-relaxed">
+                Setiap pemain akan mendapat 700 Koin pada awal permainan.
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="closeLeftPopup()" class="flex-1 text-center py-1.5 bg-amber-600 text-amber-950 font-bold text-xs rounded-md hover:bg-amber-500 transition duration-200 uppercase tracking-wider">
+                Kula sumerep
+            </button>
+        </div>
+    </div>
+    <!-- Load Configuration File -->
+    <script src="js/config.js?v=20260823a"></script>
+    <!-- Load Game Logic File -->
+    <script src="js/game.js?v=20260823c"></script>
+</body>
+</html>
